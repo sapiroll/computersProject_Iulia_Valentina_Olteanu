@@ -9,21 +9,23 @@ def fit_linear(filename):
     nump = ""
     ran = []
     ran = isValid(data[0][0], data[0][1], data[0][2], data[0][3])
+    if ran == None:
+        return
     xData = ran[0];
     dx = ran[1]; yData = ran[2]; dy = ran[3];
     info_x = data[1]
     info_y = data[2]
     info_x, info_y = axis(info_x, info_y)
     a, b = avg_for_all(xData, yData, dy, dx)
-    matp.plot(xData, yData, color='red')
-    matp.plot([min(xData), max(xData)], [a*min(xData)+b, a*max(xData)+b])
+    matp.clf()
+    matp.plot(xData, yData, 'ro', color='blue',markersize='1.3')
+    matp.plot([min(xData), max(xData)], [a*min(xData)+b, a*max(xData)+b], color='red')
     matp.xlabel(info_x)
     matp.ylabel(info_y)
     matp.errorbar(xData, yData, xerr=dx, yerr=dy, ecolor='blue', fmt='None')
     matp.savefig("linear_fig.SVG")
     file.close()
     return
-
 
 
 def isValid(xData, dx, yData, dy): # checking for errors in the data
@@ -89,7 +91,7 @@ def match(info):
     after_data = [] 
     T = []
     strings = [] 
-    if dat[0][1] in name_axis and dat[0][0] in name_axis: # if the data is sorted in columns
+    if dat[0][1] in name_axis and dat[0][0] in name_axis: # when data is sorted in columns
         for name in name_axis: 
             T = []
             r = 999
@@ -101,7 +103,7 @@ def match(info):
                     except:
                         continue
             after_data.append(T)
-    else:# if the data is sorted in rows
+    else: # when data is sorted in rows
         for name in name_axis:
             strings = None
             for l in dat:
@@ -114,7 +116,6 @@ def match(info):
     if xo and xoxo:
         find_a_b_best(answer, _a_b)
     return answer
-
 
 
 def avg_for_all(xData, yData, dy, dx):
@@ -171,7 +172,6 @@ def avg_for_all(xData, yData, dy, dx):
     return a, b
 
 
-
 def new_(modify):
     p = []
     b = []
@@ -190,7 +190,6 @@ def new_(modify):
     return p
 
 
-
 def axis(x_axis, y_axis):
     x_initial = ''
     for i in range(0, len(x_axis)):
@@ -206,12 +205,16 @@ def axis(x_axis, y_axis):
 #the bonus part
 from math import sqrt
 def find_a_b_best(answer,_a_b):
-    x_min=10**10
+    lol=0
+    for n in nump.arange(1, len(answer[0][0])):
+        lol = lol + ((answer[0][2][n] - (_a_b[0][0] * answer[0][1][n] + _a_b[1][0] )) / (ans[0][3][n])) ** 2
+    x_min = lol
     a_fin=0
     b_fin=0
     for a in nump.arange(_a_b[0][0], _a_b[0][1], _a_b[0][2]):
         for b in nump.arange(_a_b[1][0] + 1, _a_b[1][1], _a_b[1][2]):
             check=0
+            sum=0
             for n in nump.arange(0,len(answer[0][0])):
                 sum=((answer[0][2][n]-(a*answer[0][1][n]+b))/(answer[0][3][n]))**2
                 check+=sum
@@ -227,15 +230,18 @@ def find_a_b_best(answer,_a_b):
     aranged = [[], []]
     for a in nump.arange(_a_b[0][0], _a_b[0][1], _a_b[0][2]):
         check = 0
+        sum=0
         for n in range(0, len(answer[0])):
-                sum = (float(answer[0][2][n]) - (float(a) * float(answer[0][1][n]) + float(finalb))) / (float((ans[0][3][n]))) ** 2
-
-                aranged[0].append(sum)
-                aranged[1].append(a)
+            sum = (float(answer[0][2][n]) - (float(a) * float(answer[0][1][n]) + float(b_fin))) / (float((answer[0][3][n]))) ** 2
+            check += sum
+        print(sum,a)
+        aranged[0].append(sum)
+        aranged[1].append(a)
+    matp.clf()
     matp.plot(aranged[1], aranged[0], color='blue')
     matp.xlabel("A")
     matp.ylabel("Chi^2")
     matp.savefig("BestFit.SVG")
 
 
-##fit_linear("InputExcemple")
+fit_linear("InputExcemple")
