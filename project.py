@@ -244,4 +244,4 @@ def find_a_b_best(answer,_a_b):
     matp.savefig("BestFit.SVG")
 
 
-fit_linear("InputExcemple")
+#fit_linear("InputExcemple")
